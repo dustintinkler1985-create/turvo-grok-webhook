@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 GROK_API_KEY = os.getenv("GROK_API_KEY")
 
-@app.route('/', methods= )
+@app.route('/', methods=['POST'])
 def webhook():
     data = request.get_json()
     
@@ -23,7 +23,7 @@ def webhook():
 
 Analyze this Turvo shipment update and give a SHORT, professional alert.
 
-Focus ONLY on these things:
+Focus ONLY on:
 - Load number / customId
 - Lane (origin to destination)
 - Customer rate (totalReceivableAmount)
@@ -49,7 +49,7 @@ JSON: {json.dumps(data)}"""
             },
             json={
                 "model": "grok-3",
-                "messages": ,
+                "messages": [{"role": "user", "content": summary_prompt}],
                 "temperature": 0.3,
                 "max_tokens": 300
             },
@@ -58,7 +58,8 @@ JSON: {json.dumps(data)}"""
         
         if response.status_code == 200:
             result = response.json()
-            summary = result [0]  print("\n=== GROK RATE ALERT ===")
+            summary = result['choices'][0]['message']['content']
+            print("\n=== GROK RATE ALERT ===")
             print(summary)
         else:
             print("Error from Grok:", response.text)
