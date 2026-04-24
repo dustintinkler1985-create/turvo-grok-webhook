@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 GROK_API_KEY = os.getenv("GROK_API_KEY")
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods= )
 def webhook():
     data = request.get_json()
     
@@ -19,11 +19,28 @@ def webhook():
         return "OK", 200
     
     try:
-        summary_prompt = f"""You are a helpful TMS analyst. Here's a Turvo shipment update webhook. 
-Give me a clean, short summary in plain English. Focus on load number, route, status, and what changed.
+        summary_prompt = f"""You are an expert TMS Rate Analyst for Catalyst Logistics.
+
+Analyze this Turvo shipment update and give a SHORT, professional alert.
+
+Focus ONLY on these things:
+- Load number / customId
+- Lane (origin to destination)
+- Customer rate (totalReceivableAmount)
+- Margin if available
+
+Compare the current rate to what is normal for this lane.
+Be direct and flag anything unusual.
+
+Respond in this exact style:
+- First line: "Load 732867 - Batesville AR to Litchfield MN"
+- Second line: One clear sentence about the rate (example: "Rate of $2500 is 15% above our 8-week average on this lane." or "Rate of $900 is significantly below normal.")
+- If it's unusual, end with "Please review this one."
+
+Keep total response to 3 lines max.
 
 JSON: {json.dumps(data)}"""
-        
+
         response = requests.post(
             "https://api.x.ai/v1/chat/completions",
             headers={
@@ -32,18 +49,16 @@ JSON: {json.dumps(data)}"""
             },
             json={
                 "model": "grok-3",
-                "messages": [{"role": "user", "content": summary_prompt}],
-                "temperature": 0.7,
-                "max_tokens": 400
+                "messages": ,
+                "temperature": 0.3,
+                "max_tokens": 300
             },
             timeout=30
         )
         
-        print("\n=== GROK RESPONSE STATUS ===", response.status_code)
         if response.status_code == 200:
             result = response.json()
-            summary = result['choices'][0]['message']['content']
-            print("\n=== GROK SUMMARY ===")
+            summary = result [0]  print("\n=== GROK RATE ALERT ===")
             print(summary)
         else:
             print("Error from Grok:", response.text)
