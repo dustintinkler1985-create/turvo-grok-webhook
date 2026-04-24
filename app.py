@@ -14,8 +14,13 @@ def webhook():
     print("=== NEW WEBHOOK RECEIVED ===")
     print(json.dumps(data, indent=2))
     
+    if not GROK_API_KEY:
+        print("ERROR: GROK_API_KEY environment variable is not set")
+        return "OK", 200
+    
     try:
-        summary_prompt = f"""You are a helpful TMS analyst. Here's a Turvo shipment update webhook. Give me a clean, short summary in plain English. Focus on load number, route, status, and what changed.
+        summary_prompt = f"""You are a helpful TMS analyst. Here's a Turvo shipment update webhook. 
+Give me a clean, short summary in plain English. Focus on load number, route, status, and what changed.
 
 JSON: {json.dumps(data)}"""
         
@@ -27,13 +32,14 @@ JSON: {json.dumps(data)}"""
             },
             json={
                 "model": "grok-beta",
-                "messages": ,
+                "messages": [{"role": "user", "content": summary_prompt}],
                 "temperature": 0.7,
                 "max_tokens": 400
             },
             timeout=30
         )
         
+        print("\n=== GROK RESPONSE STATUS ===", response.status_code)
         if response.status_code == 200:
             result = response.json()
             summary = result [0]  print("\n=== GROK SUMMARY ===")
