@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 GROK_API_KEY = os.getenv("GROK_API_KEY")
 
-@app.route('/', methods= )
+@app.route('/', methods=['POST'])
 def webhook():
     data = request.get_json()
     
@@ -15,7 +15,7 @@ def webhook():
     print(json.dumps(data, indent=2))
     
     if not GROK_API_KEY:
-        print("ERROR: GROK_API_KEY environment variable is not set")
+        print("ERROR: GROK_API_KEY not set")
         return "OK", 200
     
     try:
@@ -42,7 +42,8 @@ JSON: {json.dumps(data)}"""
         print("\n=== GROK RESPONSE STATUS ===", response.status_code)
         if response.status_code == 200:
             result = response.json()
-            summary = result [0]  print("\n=== GROK SUMMARY ===")
+            summary = result['choices'][0]['message']['content']
+            print("\n=== GROK SUMMARY ===")
             print(summary)
         else:
             print("Error from Grok:", response.text)
