@@ -27,7 +27,7 @@ JSON: {json.dumps(data)}"""
             },
             json={
                 "model": "grok-beta",
-                "messages": [{"role": "user", "content": summary_prompt}],
+                "messages": ,
                 "temperature": 0.7,
                 "max_tokens": 400
             },
@@ -35,7 +35,8 @@ JSON: {json.dumps(data)}"""
         )
         
         if response.status_code == 200:
-            summary = response.json() [0]  print("\n=== GROK SUMMARY ===")
+            result = response.json()
+            summary = result [0]  print("\n=== GROK SUMMARY ===")
             print(summary)
         else:
             print("Error from Grok:", response.text)
