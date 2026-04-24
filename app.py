@@ -31,7 +31,7 @@ JSON: {json.dumps(data)}"""
                 "Content-Type": "application/json"
             },
             json={
-                "model": "grok-beta",
+                "model": "grok-3",
                 "messages": [{"role": "user", "content": summary_prompt}],
                 "temperature": 0.7,
                 "max_tokens": 400
